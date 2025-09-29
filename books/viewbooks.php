@@ -1,41 +1,66 @@
 <?php
-require_once "../classes/addproduct.php";
-$bookObj = new Books();
-$books = $bookObj->viewBook();
-?>
+require_once "../classes/books.php";
 
+$booksObj = new books();
+$search = $genre = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    $search = isset($_GET["search"]) ? trim(htmlspecialchars($_GET["search"])) : "";
+    $genre = isset($_GET["genre"]) ? trim(htmlspecialchars($_GET["genre"])) : "";
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Books</title>
 </head>
 <body>
-    <button><a href="addbooks.php">Add New Book</a></button>
-    <table border="1" cellpadding="5" cellspacing="0">
-        <tr>
-            <th>ID</th>
-            <th>TITLE</th>
-            <th>AUTHOR</th>
-            <th>GENRE</th>
-            <th>PUB_YEAR</th>
-            <th>Action</th>
-        </tr>
+    <h1>Books</h1>
+    <form action="" method="get">
+        <label for="">Search: </label>
+        <input type="search" name="search" id="search" value="<?= $search ?>">
+        <select name="genre" id="genre">
+            <option value="">--ALL--</option>
+            <option value="history" <?= ($genre === "history") ? 'selected' : '' ?>>History</option>
+            <option value="science" <?= ($genre === "science") ? 'selected' : '' ?>>Science</option>
+            <option value="fiction" <?= ($genre === "fiction") ? 'selected' : '' ?>>Fiction</option>
+        </select>
+        <input type="submit" value="Search">
+    </form>
 
-        <?php foreach ($books as $row): ?>
-            <?php $message = "Are you sure you want to delete the book '" . $row["title"] . "'?"; ?>
+    <h1>Books Lists</h1>
+    <button><a href="addbooks.php">Add Books</a></button>
+    <table border="1">
+        <tr>
+            <th>No.</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Genre</th>
+            <th>Publication Year</th>
+            <th>Actions</th>
+        </tr>
+        <?php
+        $results = $booksObj->viewBooks($search, $genre);
+        if ($results) {
+            foreach ($results as $book) 
+                $message = "Are you sure you want to delete the book: " . $book["title"] . "?";
+        ?>
             <tr>
-                <td><?= htmlspecialchars($row["id"]) ?></td>
-                <td><?= htmlspecialchars($row["title"]) ?></td>
-                <td><?= htmlspecialchars($row["author"]) ?></td>
-                <td><?= htmlspecialchars($row["genre"]) ?></td>
-                <td><?= htmlspecialchars($row["pub_year"]) ?></td>
+                <td><?= $book["id"] ?></td>
+                <td><?= $book["title"] ?></td>
+                <td><?= $book["author"] ?></td>
+                <td><?= $book["genre"] ?></td>
+                <td><?= $book["publication_year"] ?></td>
                 <td>
-                    <a href="editproduct.php?id=<?= $row["id"] ?>">Edit</a> | 
-                    <a href="deletebooks.php?id=<?= $row["id"] ?>" onclick="return confirm('<?= $message ?>')">Delete</a>
+                    <a href="editbooks.php?id=<?= $book["id"] ?>">Edit</a>
+                    <a href="deletebooks.php?id=<?= $book["id"] ?>" onclick="return confirm('<?= $message ?>')">Delete</a>
                 </td>
             </tr>
-        <?php endforeach; ?>
+        <?php
+        }
+        ?>
     </table>
 </body>
 </html>

@@ -1,19 +1,16 @@
-<?php
-class Database {
-    private $servername = "localhost";
-    private $username   = "root";   // default in XAMPP
-    private $password   = "";       // default in XAMPP
-    private $dbname     = "book";   // use your actual database name
+<?php 
+    class Database{
+        private $host = "localhost";
+        private $username = "root";
+        private $password = "";
+        private $dbname = "books";
 
-    protected $conn;
+        protected $conn;
 
     public function connect() {
-        $this->conn = new PDO(
-            "mysql:host=$this->servername;dbname=$this->dbname",
-            $this->username,
-            $this->password
-        );
-        $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->conn = new PDO("mysql:host=$this->host;dbname=$this->dbname",$this->username,$this->password);
         return $this->conn;
     }
 }
+
+    

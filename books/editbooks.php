@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $errors["publication_year"] = "Year must not be in the future";
     }
 
-    if (array_filter($errors)) {
+    if (empty(array_filter($errors))) {
         $booksObj->title = $books["title"];
         $booksObj->author = $books["author"];
         $booksObj->genre = $books["genre"];
